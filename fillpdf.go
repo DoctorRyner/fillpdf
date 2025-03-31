@@ -116,6 +116,7 @@ func Fill(form Form, formPDFFile, destPDFFile string, options ...Options) (err e
 		formPDFFile,
 		"fill_form", fdfFile,
 		"output", outputFile,
+		"need_appearances",
 	}
 
 	// If the user specified to flatten the output PDF we append the related parameter.
