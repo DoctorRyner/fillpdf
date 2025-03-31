@@ -61,15 +61,12 @@ func Fill(form Form, formPDFFile, destPDFFile string, options ...Options) (err e
 		return fmt.Errorf("failed to create fdf form data file: %v", err)
 	}
 
-	// Get executable directory
-	execPath, err := os.Executable()
+	// Get current working directory
+	workDir, err := os.Getwd()
 	if err != nil {
-		return fmt.Errorf("failed to get executable path: %v", err)
+		return fmt.Errorf("failed to get working directory: %v", err)
 	}
-	execDir := filepath.Dir(execPath)
-
-	// Construct path to JAR relative to executable
-	jarPath := filepath.Join(execDir, "mcpdf.jar")
+	jarPath := filepath.Join(workDir, "mcpdf.jar")
 
 	args := []string{
 		"-jar", jarPath,
