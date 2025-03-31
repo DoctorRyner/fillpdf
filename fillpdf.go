@@ -26,6 +26,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/gdamore/encoding"
 )
@@ -171,14 +172,12 @@ func createFdfFile(form Form, path string) error {
 	// Write the form data.
 	var valueStr string
 	for key, value := range form {
-		// Convert to Latin-1.
-		valueStr, err = utf8Encoder.String(fmt.Sprintf("%v", value))
-		if err != nil {
-			return fmt.Errorf("failed to convert string to Latin-1")
-		}
-		fmt.Fprintf(w, "<< /T (%s) /V (%s)>>\n", key, valueStr)
+		// Use UTF-8 encoding instead of Latin-1
+		valueStr = fmt.Sprintf("%v", value)
+		// Escape special characters in the PDF form value
+		escapedValue := escapeString(valueStr)
+		fmt.Fprintf(w, "<< /T (%s) /V (%s)>>\n", key, escapedValue)
 	}
-
 	// Write the fdf footer.
 	fmt.Fprintln(w, fdfFooter)
 
@@ -186,11 +185,26 @@ func createFdfFile(form Form, path string) error {
 	return w.Flush()
 }
 
+func escapeString(s string) string {
+	var result strings.Builder
+	for _, r := range s {
+		switch r {
+		case '(', ')', '\\':
+			result.WriteRune('\\')
+			result.WriteRune(r)
+		default:
+			result.WriteRune(r)
+		}
+	}
+	return result.String()
+}
+
 const fdfHeader = `%FDF-1.2
 %,,oe"
 1 0 obj
 <<
-/FDF << /Fields [`
+/FDF << /Fields [
+/NeedAppearances true`
 
 const fdfFooter = `]
 >>
