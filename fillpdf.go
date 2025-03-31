@@ -70,13 +70,13 @@ func Fill(form Form, formPDFFile, destPDFFile string, options ...Options) (err e
 
 	args := []string{
 		"-jar", jarPath,
-		"fill_form", formPDFFile,
-		"data", fdfFile,
-		"output", outputFile,
+		"fill_form=" + formPDFFile,
+		"data=" + fdfFile,
+		"output=" + outputFile,
 	}
 
 	if opts.Flatten {
-		args = append(args, "flatten")
+		args = append(args, "flatten=true")
 	}
 
 	if err = runCommandInPath(tmpDir, "java", args...); err != nil {
