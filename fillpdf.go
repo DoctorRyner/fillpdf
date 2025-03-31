@@ -31,9 +31,7 @@ import (
 )
 
 var (
-	// pdftk does not support UTF-8. To support at least some special characters,
-	// let's use the Latin-1 encoding.
-	latin1Encoder = encoding.ISO8859_1.NewEncoder()
+	utf8Encoder = encoding.UTF8.NewEncoder()
 )
 
 // Form represents the PDF form.
@@ -173,7 +171,7 @@ func createFdfFile(form Form, path string) error {
 	var valueStr string
 	for key, value := range form {
 		// Convert to Latin-1.
-		valueStr, err = latin1Encoder.String(fmt.Sprintf("%v", value))
+		valueStr, err = utf8Encoder.String(fmt.Sprintf("%v", value))
 		if err != nil {
 			return fmt.Errorf("failed to convert string to Latin-1")
 		}
